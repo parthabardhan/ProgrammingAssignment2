@@ -1,11 +1,11 @@
-## makeCacheMatrix creates the "special matrix"
-## it is actually a list consists of 4 functions
+## makeCacheMatrix creates the "special matrix", 
+## which is actually a list consists of 4 functions
 ##        1. set -- to set a new matrix. It also clears the calculated inverse if any
 ##        2. get -- returns the matrix
-##        3. setinv -- set the inverse supplied.
-##        4. getinv -- get the cached inv.
+##        3. setinv -- set the inverse supplied (calculated outside).
+##        4. getinv -- get the cached inverse of the matirix set in it.
 ##
-##cacheSolve calculates the inverse of the "special matrix" given by makeCacheMatrix
+##cacheSolve calculates the inverse of the "special matrix" given by makeCacheMatrix above
 ##           but it does not calculate if it's aleady calculated. in this case it simply
 ##           returns the cached inverse
 ## 
@@ -16,15 +16,15 @@
 makeCacheMatrix <- function( x = matrix() ) {
      inv <- NULL
      set <- function( y ){
-          x <<- y
+          x   <<- y
           inv <<- NULL
      }
-     get <- function() x
+     get    <- function() x
      setinv <- function( inverse ) inv <<- inverse
      getinv <- function() inv
      
-     list( set = set,
-           get = get,
+     list( set    = set,
+           get    = get,
            setinv = setinv,
            getinv = getinv )
 }
@@ -35,14 +35,18 @@ makeCacheMatrix <- function( x = matrix() ) {
 
 cacheSolve <- function( x, ... ) {
      ## Return a matrix that is the inverse of 'x'
+     
      inv <- x$getinv()
+     
      if( !is.null( inv ) ){
           # Ok, inverse is already calculated, so just return it
           # This message is just to prove that it went thru this path
           message( "Inverse already Calculated: returning from cache" )
           return( inv )
      }
-     # no inverse, so calculate and cache it
+     
+     # no previously calculated inverse exists, 
+     # so calculate and cache it
      inv <- solve( x$get() )
      x$setinv( inv )
      inv
